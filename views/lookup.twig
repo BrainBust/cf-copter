@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Ipcopter</title>
+		<meta name="robots" content="noindex, nofollow" />
+
+		<link href='http://fonts.googleapis.com/css?family=Aldrich' rel='stylesheet' type='text/css'>
+		<link href="/assets/css/bootstrap.css" rel="stylesheet">
+		<script type="text/javascript" src="/assets/js/jquery-2.0.1.min.js"></script>
+	</head>
+	<body>
+	<div class="row">
+		<div class="container">
+			<div class="well">
+				<a class="btn btn-primary" href="/">Back</a>
+					<div class="text-center"><h2>Latest</h2></div>				
+					<div id="chartdiv" style="height:500px;width:100%; "></div>
+					<div class="text-center"><h2>Logs</h2></div>
+					<table id="sort_logs" class="table table-condensed">
+					<thead><tr><th>When</th><th>Success</th><th>Latency</th></tr></thead><tbody>
+					{% for ping in pings %}
+					<tr><td>{{ping.when}}</td><td>{% if ping.result > 0 %}<strong style="color:green;">YES</strong>{% else %}<strong style="color:red;">NO</strong>{% endif %}</td><td>{{ping.latency}}</td></tr>
+					{% endfor %}
+					</tbody></table>	
+
+					
+				
+				
+			</div>
+		</div>
+		<script type="text/javascript" src="/assets/js/jquery.jqplot.js"></script>
+		<script type="text/javascript" src="/assets/js/plugins/jqplot.dateAxisRenderer.min.js"></script>
+		<script type="text/javascript" src="/assets/js/jquery.tablesorter.js"></script>
+		<script type="text/javascript" src="/assets/js/plugins/jqplot.highlighter.min.js"></script>
+		<script type="text/javascript" src="/assets/js/plugins/jqplot.cursor.min.js"></script>
+		<script>
+			$(document).ready(function(){
+				$.jqplot('chartdiv', [[	{% for ping in pings|slice(0, 100) %}['{{ping.when}}', {{ping.latency}}],{% endfor %} ]], { axes:{xaxis:{renderer:$.jqplot.DateAxisRenderer, tickInterval:'30 minutes'}, yaxis:{ min: 200, max: 1500, tickInterval: 100 }, highlighter: { show: true, sizeAdjust: 7.5 }, cursor: { show: false }}, series:[{showLine:false, markerOptions:{size: 4, style:'x'}}]});
+				$('#sort_logs').tablesorter(); 
+			});
+		</script>
+	</body>
+</html>
+

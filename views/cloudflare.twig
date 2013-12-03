@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Ipcopter</title>
+		<meta name="robots" content="noindex, nofollow" />
+
+		<link href='http://fonts.googleapis.com/css?family=Aldrich' rel='stylesheet' type='text/css'>
+		<link href="/assets/css/bootstrap.css" rel="stylesheet">
+		<script type="text/javascript" src="/assets/js/jquery-2.0.1.min.js"></script>
+	</head>
+	<body>
+	<div class="row">
+		<div class="container">
+			<div class="well">
+				<a class="btn btn-primary" href="/">Back</a>
+
+					<div class="text-center"><h2>Cloudflare Records</h2></div>
+					<table id="sort_cf" class="table table-condensed">
+					<thead><tr><th>ID</th><th>IP</th><th>TTL</th><th>Mode</th><th></th></tr></thead><tbody>
+					{% for entry in cloudflare %}
+					{% if entry.name == cf_domain and entry.type == 'A' %}
+					<tr><td>{{entry.rec_id}}</td><td><a href="/cf/lookup/{{entry.content}}">{{entry.content}}</a></td><td>{{entry.ttl}}</td><td>{{entry.service_mode}}</td><td><button id="ipc_remove_ip_{{entry.content}}" title="Remove {{entry.content}}" class="btn btn-sm">R</button></td></tr>
+					{% endif %}
+					{% endfor %}
+					</tbody></table>	
+
+					
+				
+				
+			</div>
+		</div>
+		<script type="text/javascript" src="/assets/js/jquery.tablesorter.js"></script>
+		<script>
+			$(document).ready(function(){
+				$('#sort_cf').tablesorter(); 
+				$('button[id^="ipc_remove_ip_"]').click(function(event) {	
+					event.preventDefault();
+					var click_ip = this.id;
+					click_ip = click_ip.replace("ipc_remove_ip_", "");
+					url = '/cloudflare/remove/' + click_ip;
+					var posting = $.post(url);
+					posting.done(function(data) { location.href="http://cfcopter.eu01.aws.af.cm/cloudflare"; });				
+				});				
+			});
+		</script>
+	</body>
+</html>
+

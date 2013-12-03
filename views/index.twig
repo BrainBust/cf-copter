@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Ipcopter</title>
+		<meta name="robots" content="noindex, nofollow" />
+
+		<link href='http://fonts.googleapis.com/css?family=Aldrich' rel='stylesheet' type='text/css'>
+		<link href="/assets/css/bootstrap.css" rel="stylesheet">
+		<script language="javascript" type="text/javascript" src="/assets/js/jquery-2.0.1.min.js"></script>
+	</head>
+	<body>
+	<div class="row">
+		<div class="container">
+			<div class="well">
+				<div class="text-center">
+					<div class="well">
+					<h1><a href="/">{{cf_domain}}</a></h1>
+						Currently in {{pingmethod}} mode.<br />
+						Average cycle time for {{servers|length}} IPs -> {% if pingmethod == 'singleping' %}{{servers|length*(config.singleping_interval/1000)}}{% else %}{{servers|length*(config.multiping_interval/1000)}}{% endif %} seconds.<br />
+						<a href="/cloudflare">CF Records</a>
+					</div>
+				</div>
+					<div class="text-center"><h2>Server List</h2></div>
+					<table id="sort_servers" class="table table-condensed">
+						<thead><tr><th>IP</th><th>Port</th><th>Online</th><th>Latency</th><th>Last Update</th><th></th></tr></thead>
+						<tbody>
+							{% for server in servers %}
+								<tr><td><a href="/lookup/{{server.ip}}">{{server.ip}}</a></td><td>{{server.port}}</td><td>{% if server.online > 0 %}<strong style="color:green;">YES</strong>{% else %}<strong style="color:red;">NO</strong>{% endif %}</td><td>{{server.latency}}</td><td>{{server.last_update}}</td><td><button id="ipc_remove_ip_{{server.ip}}" title="Remove {{server.ip}}" class="btn btn-sm">R</button></td></tr>
+							{% endfor %}
+						</tbody>
+					</table>
+
+						<div class="col-md-4">
+							<div class="text-center">	
+								<h2> Ip Control </h2>
+								<form role="form">
+									<input type="text" id="ipc_addip_input" /><br />
+									<button style="margin-top:10px;" class="btn btn-primary" id="ipc_addip_submit">Add IP</button>
+								</form>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="text-center">
+								<h2> Purge Ping Logs </h2>
+								<form role="form">
+									<input type="number" min="5" id="ipc_purgeping_input" /><br />
+									<button style="margin-top:10px;" class="btn btn-primary" id="ipc_purge_ping">Purge</button>
+								</form>						
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="text-center">
+								<h2> Reserved </h2>					
+							</div>
+						</div>	
+					
+				
+		
+					
+					
+					<table id="sort_boots" class="table table-condensed">
+						<caption><div class="text-center"><h2> Recent Cloud Starts </h2></div></caption>
+						<thead><tr><th>When</th><th>Host</th><th>CPUs</th><th>Uptime</th><th>Servers</th><th>Ping Method</th></tr></thead>
+						<tbody>
+							{% for boot in lastboots %}
+								<tr><td>{{boot.when}}</td><td>{{boot.host}}</td><td>{{boot.cpus}}</td><td>{{boot.uptime}}</td><td>{{boot.servers}}</td><td>{{boot.method}}</td></tr>
+							{% endfor %}
+						</tbody>
+					</table>								
+			</div>
+		</div>
+		<script language="javascript" type="text/javascript" src="/assets/js/jquery.tablesorter.js"></script>
+		<script>
+			$(document).ready(function(){
+				$('button[id^="ipc_remove_ip_"]').click(function(event) {	
+					event.preventDefault();
+					var click_ip = this.id;
+					click_ip = click_ip.replace("ipc_remove_ip_", "");
+					url = '/remove/' + click_ip;
+					var posting = $.post(url);
+					posting.done(function(data) { location.href="http://cfcopter.eu01.aws.af.cm/"; });				
+				});
+				$('#ipc_addip_submit').click(function(event) {	
+					event.preventDefault();
+					url = '/addip/' + $('#ipc_addip_input').val();
+					var posting = $.post(url);
+					posting.done(function(data) { location.href="http://cfcopter.eu01.aws.af.cm/"; });				
+				});	
+				$('#ipc_purge_ping').click(function(event) {	
+					event.preventDefault();
+					url = '/addip/' + $('#ipc_purgeping_input').val();
+					var posting = $.post(url);
+					posting.done(function(data) { location.href="http://cfcopter.eu01.aws.af.cm/"; });				
+				});					
+				$('#sort_servers').tablesorter(); 
+				$('#sort_boots').tablesorter(); 
+			});			
+		</script>
+	</body>
+</html>
+

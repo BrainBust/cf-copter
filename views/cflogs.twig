@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Ipcopter</title>
+		<meta name="robots" content="noindex, nofollow" />
+
+		<link href='http://fonts.googleapis.com/css?family=Aldrich' rel='stylesheet' type='text/css'>
+		<link href="/assets/css/bootstrap.css" rel="stylesheet">
+		<script type="text/javascript" src="/assets/js/jquery-2.0.1.min.js"></script>
+	</head>
+	<body>
+	<div class="row">
+		<div class="container">
+			<div class="well">
+				<a class="btn btn-primary" href="/">Back</a>
+					<div class="text-center"><h2>CF Logs</h2></div>				
+					<div class="text-center"><h2>Logs</h2></div>
+					<table id="sort_logs" class="table table-condensed">
+						<thead><tr><th>When</th><th>CF ID</th><th>Success</th><th>Latency</th><th>TTL</th></tr></thead>
+						<tbody>
+							{% for entry in cflogs %}
+								<tr><td>{{entry.when}}</td><td>{{entry.rec_id}}</td><td>{% if entry.action > 0 %}<strong style="color:green;">Added</strong>{% else %}<strong style="color:red;">Deleted</strong>{% endif %}</td><td>{{entry.latency}}</td><td>{{entry.ttl}}</td></tr>
+							{% endfor %}
+						</tbody>
+					</table>	
+
+					
+				
+				
+			</div>
+		</div>
+		<script type="text/javascript" src="/assets/js/jquery.tablesorter.js"></script>
+		<script>
+			$(document).ready(function(){
+				$('#sort_logs').tablesorter(); 
+			});
+		</script>
+	</body>
+</html>
+
